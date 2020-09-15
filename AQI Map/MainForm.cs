@@ -252,8 +252,6 @@ namespace AQI_Map
 
         private void MainForm_FormClosed( object sender, FormClosedEventArgs e )
         {
-            //gmap.Dispose();
-            //logger.Stop();
         }
 
         private void buttonClose_Click( object sender, EventArgs e )

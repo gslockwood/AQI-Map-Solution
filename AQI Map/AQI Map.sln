@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AQI Map", "AQI Map.csproj", "{863A2537-8FDA-41CD-8547-E80E187D6BEE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ACADAC17-5B1E-48F1-BF22-FA3D17105C13} = {ACADAC17-5B1E-48F1-BF22-FA3D17105C13}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AQIRestService", "..\AQIRestService\AQIRestService.csproj", "{66163F7F-CB7F-4B6D-BDD3-0DBF3B7D82B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "..\Utilities\Utilities.csproj", "{ACADAC17-5B1E-48F1-BF22-FA3D17105C13}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoUtilities", "..\GeoUtilities\GeoUtilities.csproj", "{28817354-F2EB-4C31-BACD-E07A8EFD9818}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitTestProject", "..\NUnitTestProject\NUnitTestProject.csproj", "{797920B4-5538-4FCD-AB65-4AEE17BF5692}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{863A2537-8FDA-41CD-8547-E80E187D6BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863A2537-8FDA-41CD-8547-E80E187D6BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863A2537-8FDA-41CD-8547-E80E187D6BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{863A2537-8FDA-41CD-8547-E80E187D6BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66163F7F-CB7F-4B6D-BDD3-0DBF3B7D82B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66163F7F-CB7F-4B6D-BDD3-0DBF3B7D82B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66163F7F-CB7F-4B6D-BDD3-0DBF3B7D82B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66163F7F-CB7F-4B6D-BDD3-0DBF3B7D82B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACADAC17-5B1E-48F1-BF22-FA3D17105C13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACADAC17-5B1E-48F1-BF22-FA3D17105C13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACADAC17-5B1E-48F1-BF22-FA3D17105C13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACADAC17-5B1E-48F1-BF22-FA3D17105C13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28817354-F2EB-4C31-BACD-E07A8EFD9818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28817354-F2EB-4C31-BACD-E07A8EFD9818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28817354-F2EB-4C31-BACD-E07A8EFD9818}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28817354-F2EB-4C31-BACD-E07A8EFD9818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{797920B4-5538-4FCD-AB65-4AEE17BF5692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{797920B4-5538-4FCD-AB65-4AEE17BF5692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{797920B4-5538-4FCD-AB65-4AEE17BF5692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{797920B4-5538-4FCD-AB65-4AEE17BF5692}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DDC41867-A8EF-460B-A60B-96703E10B5B5}
+	EndGlobalSection
+EndGlobal

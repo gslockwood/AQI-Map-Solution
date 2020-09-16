@@ -8,6 +8,7 @@ using Utilities;
 using GeoUtilities;
 using System.Collections.Generic;
 using Controller;
+using System.Drawing;
 
 namespace AQI_Map
 {
@@ -95,7 +96,7 @@ namespace AQI_Map
 
             initializing = false;
 
-            buttonFind_ClickAsync( this, null );
+            //buttonFind_ClickAsync( this, null );
             //
         }
 
@@ -137,14 +138,13 @@ namespace AQI_Map
 
         private void PlotData()
         {
-            labelAverageAqi.Text = null;
-
-            IList<AqiPackage.Data> currentData = controller.currentAqiPackageDataList;
-            if( ( currentData == null ) || ( currentData.Count == 0 ) )
+            if( !controller.isCurrentAqiPackageDataList )
             {
                 labelMsg.Text = "currentData is empty";
                 return;
             }
+
+            labelAverageAqi.Text = null;
 
             gmap.Overlays.Clear();
             gmap.Refresh();
@@ -152,8 +152,9 @@ namespace AQI_Map
             int particleIndex = ( (ComboTypeItem)comboBoxParticleType.SelectedItem ).Value();
             AqiPackage.Type currentType = (AqiPackage.Type)comboBoxType.SelectedItem;
             bool filterChecked = this.checkBoxFilter.Checked;
+            int filterPercentage = 10;
 
-            Data data = controller.getMarkerData( particleIndex, currentType, filterChecked, 10 );
+            Data data = controller.getMarkerData( particleIndex, currentType, filterChecked, filterPercentage );
             if( data == null )
             {
                 labelMsg.Text = "data is empty";
@@ -163,16 +164,8 @@ namespace AQI_Map
             IList<DataPoint> dataPoints = data.DataPoints;
 
             GMapOverlay markers = new GMapOverlay( "markers" );
-            GMapMarker marker = null;
             foreach( DataPoint dataPoint1 in dataPoints )
-            {
-                marker = BuildMarker( particleIndex, dataPoint1.Lat, dataPoint1.Lon, dataPoint1.Label, dataPoint1.Value );
-                if( marker == null )
-                    continue;
-
-                markers.Markers.Add( marker );
-
-            }
+                markers.Markers.Add( BuildMarker( dataPoint1.Lat, dataPoint1.Lon, dataPoint1.Label, dataPoint1.Value, dataPoint1.Color ) );
 
             labelAverageAqi.Text = data.averageAqi.ToString();
 
@@ -182,7 +175,15 @@ namespace AQI_Map
             //
         }
 
-        private GMapMarker BuildMarker( int varIndex, double lat, double lon, string label, double value )
+        private GMapMarker BuildMarker( double lat, double lon, string label, double value, Color color )
+        {
+            GMapMarker marker = new MyGMarkerGoogle( new GMap.NET.PointLatLng( lat, lon ), value.ToString( "0.##" ), color );
+            marker.ToolTipText = label + "\n" + value.ToString();
+            return marker;
+            //
+        }
+        /*
+        private GMapMarker BuildMarkerX( int varIndex, double lat, double lon, string label, double value )
         {
             Double variable = value;
             IAqiCalc aqiCalc = null;
@@ -212,7 +213,7 @@ namespace AQI_Map
             return marker;
             //
         }
-
+        */
         private void gmap_OnTileLoadComplete( long elapsedMilliseconds )
         {
             viewArea = gmap.ViewArea;

@@ -20,6 +20,15 @@ namespace AQI_Map
 
         }
 
+        public MyGMarkerGoogle( PointLatLng point, String text, Color foreColor ) : base( point, GMarkerGoogleType.arrow )
+        {
+            this.Size = new Size( 24, 24 );
+            this.foreColor = foreColor;
+            this.text = text;
+            font = new System.Drawing.Font( "Sansation", 5.0F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0 );
+
+        }
+
         public override void OnRender( Graphics g )
         {
             base.OnRender( g );

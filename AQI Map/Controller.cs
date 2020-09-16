@@ -5,6 +5,7 @@ using GMap.NET.MapProviders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Utilities;
@@ -16,14 +17,15 @@ namespace Controller
         Logger logger = new Logger( "AQI_Map Controller", Logger.Targets.Console );
         private AQIRestService.AQIRestService aQIRestService;
         private AqiPackage currentAqiPackage;
-        private IDictionary<int, double> current_pm_25List;
-        private IDictionary<int, double> current_pm_10List;
+        //private IDictionary<int, double> current_pm_25List;
+        //private IDictionary<int, double> current_pm_10List;
 
         /*
         public double currentSum_pm_1 { get; private set; }
         public double currentSum_pm_10 { get; private set; }
         */
         public List<AqiPackage.Data> currentAqiPackageDataList { get; private set; }
+        public bool isCurrentAqiPackageDataList { get { return ( ( currentAqiPackageDataList != null ) && ( currentAqiPackageDataList.Count > 0 ) ); } }
 
         public Controller( AQIRestService.AQIRestService aQIRestService )
         {
@@ -66,10 +68,11 @@ namespace Controller
 
 
             AqiPackage.Data data = null;
-            currentAqiPackageDataList = new List<AqiPackage.Data>();
+            this.currentAqiPackageDataList = new List<AqiPackage.Data>();
+            //IList<AqiPackage.Data> currentData = controller.currentAqiPackageDataList;
 
-            current_pm_25List = new Dictionary<int, double>();
-            current_pm_10List = new Dictionary<int, double>();
+            //current_pm_25List = new Dictionary<int, double>();
+            //current_pm_10List = new Dictionary<int, double>();
 
             foreach( Object[] line in currentAqiPackage.data )
             {
@@ -84,10 +87,10 @@ namespace Controller
                     continue;
 
                 data = new AqiPackage.Data( line );
-                currentAqiPackageDataList.Add( data );
+                this.currentAqiPackageDataList.Add( data );
 
-                current_pm_25List.Add( data.id, data.PM25 );
-                current_pm_10List.Add( data.id, data.PM10 );
+                //current_pm_25List.Add( data.id, data.PM25 );
+                //current_pm_10List.Add( data.id, data.PM10 );
 
             }
 
@@ -130,7 +133,7 @@ namespace Controller
             {
                 lowest = list.OrderBy( x => x.PM10 ).Take( list.Count() - number );
                 //System.Diagnostics.Debug.WriteLine( lowest.Count() );
-                highest = lowest.OrderByDescending( x => x.PM10 ).Take( lowest.Count() - number);
+                highest = lowest.OrderByDescending( x => x.PM10 ).Take( lowest.Count() - number );
                 //System.Diagnostics.Debug.WriteLine( highest.Count() );
             }
 
@@ -168,7 +171,7 @@ namespace Controller
             IList<DataPoint> dataPoints = new List<DataPoint>();
 
             DataPoint dataPoint = null;
-            int counter = 0;
+            //int counter = 0;
             foreach( AqiPackage.Data item in currentData )
             {
                 if( item.Type != (int)currentType )
@@ -176,32 +179,34 @@ namespace Controller
 
                 IAqiCalc aqiCalc = null;
                 if( particleIndex == (int)AqiPackage.Names.PM25 )
-                {
                     aqiCalc = new AqiCalcPm2pt5( item.PM25 );
-                    averageAqi += aqiCalc.getAQI();
-                }
+
                 else if( particleIndex == (int)AqiPackage.Names.PM10 )
-                {
                     aqiCalc = new AqiCalcPm10( item.PM10 );
-                    averageAqi += aqiCalc.getAQI();
-                }
 
                 else
                 {
                     continue;
                 }
 
-                counter++;
+                //counter++;
 
                 double aqi = aqiCalc.getAQI();
+                averageAqi += aqi;
 
-                dataPoint = new DataPoint( item.Lat, item.Lon, item.Label, aqi );
+                //System.Diagnostics.Debug.WriteLine( aqi );
+
+                dataPoint = new DataPoint( item.Lat, item.Lon, item.Label, aqi, aqiCalc.getColor() );
                 if( dataPoint != null )
                     dataPoints.Add( dataPoint );
                 //
 
             }
-            Data data = new Data( averageAqi / counter, dataPoints );
+
+            if( dataPoints.Count() == 0 )
+                return null;
+
+            Data data = new Data( averageAqi / dataPoints.Count(), dataPoints );
 
             return data;
             //
@@ -235,12 +240,16 @@ namespace Controller
         public double Lon { get; }
         public string Label { get; }
         public double Value { get; }
-        public DataPoint( double lat, double lon, string label, double value )
+        public Color Color { get; internal set; }
+
+        public DataPoint( double lat, double lon, string label, double value, Color color )
         {
             Lat = lat;
             Lon = lon;
             Label = label;
             Value = value;
+            Color =color;
+            //
         }
 
 

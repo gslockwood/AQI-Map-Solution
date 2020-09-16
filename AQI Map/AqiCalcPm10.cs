@@ -70,43 +70,24 @@ namespace Controller
             aqi = AQIlow + ( AQIhigh - AQIlow ) / ( Chigh - Clow ) * ( variable - Clow );
 
             if( aqi <= 50 )
-            {
-                type = GMarkerGoogleType.green_small;
-                //rgba(104,225,67,1.0);
                 color = Color.FromArgb( 104, 225, 67 );
-            }
-            else if( aqi <= 100 )
-            {
-                type = GMarkerGoogleType.yellow_small;
-                color = Color.FromArgb( 255, 255, 85 );
-            }
-            else if( aqi <= 150 )
-            {
-                type = GMarkerGoogleType.orange_small;
-                color = Color.FromArgb( 239, 133, 51 );
-            }
-            else if( aqi <= 200 )
-            {
-                type = GMarkerGoogleType.red_small;
-                color = Color.FromArgb( 234, 51, 36 );
-            }
-            else if( aqi <= 300 )
-            {
-                type = GMarkerGoogleType.purple_small;
-                color = Color.FromArgb( 140, 26, 75 );
-            }
-            //else if( aqi <= 400 )
-            //{
-            //    type = GMarkerGoogleType.purple_small;
-            //    color = Color.FromArgb( 115, 20, 37 );
-            //}
-            else
-            {
-                type = GMarkerGoogleType.brown_small;
-                color = Color.FromArgb( 115, 20, 37 );
-            }
 
-            type = GMarkerGoogleType.arrow;
+            else if( aqi <= 100 )
+                color = Color.FromArgb( 255, 255, 85 );
+
+            else if( aqi <= 150 )
+                color = Color.FromArgb( 239, 133, 51 );
+
+            else if( aqi <= 200 )
+                color = Color.FromArgb( 234, 51, 36 );
+
+            else if( aqi <= 300 )
+                color = Color.FromArgb( 140, 26, 75 );
+
+            else
+                color = Color.FromArgb( 115, 20, 37 );
+
+            //type = GMarkerGoogleType.arrow;
 
         }
 

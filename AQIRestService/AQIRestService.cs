@@ -34,11 +34,25 @@ namespace AQIRestService
                 //Stream streamTask = await client.GetStreamAsync( url );
                 //results = await JsonSerializer.DeserializeAsync<AqiPackage>( streamTask );
 
+                //GET https://www.purpleair.com/map?opt=1/i/mAQI/a10/cC0 HTTP/1.1
+                var html = await client.GetStringAsync( @"https://www.purpleair.com/map?opt=1/i/mAQI/a10/cC0" );
+
                 var content = await client.GetStringAsync( url );
+                /*
                 logger.Debug( content );
 
                 var extendedCharPresent = content.Any( ( b ) => b == 124 );
                 var extendedCharPresent1 = content.Contains( "|" );
+
+                System.Diagnostics.Debug.WriteLine( "Success |" + content[19] + "|" );
+                System.Diagnostics.Debug.WriteLine( "Success |" + content[18] + "|" );
+                System.Diagnostics.Debug.WriteLine( "Success |" + content[20] + "|" );
+
+                System.Diagnostics.Debug.WriteLine( "Success int=|" + (int)content[20] + "|" );
+
+                System.Diagnostics.Debug.WriteLine( "Success |" + content[21] + "|" );
+                System.Diagnostics.Debug.WriteLine( "Success |" + content[22] + "|" );
+
 
                 if( extendedCharPresent || extendedCharPresent1 )
                 {
@@ -53,7 +67,7 @@ namespace AQIRestService
                         content = content.Replace( match.Value, temp );
                     }
                 }
-
+                */
                 return JsonConvert.DeserializeObject<AqiPackage>( content );
 
             }

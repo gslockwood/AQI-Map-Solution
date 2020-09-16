@@ -170,8 +170,9 @@ namespace AQI_Map
             labelAverageAqi.Text = data.averageAqi.ToString();
 
             gmap.Overlays.Add( markers );
-
-            buttonFit_ClickAsync( this, null );
+            
+            gmap.Zoom += 0.000000001;
+            //buttonFit_ClickAsync( this, null );
             //
         }
 

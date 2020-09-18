@@ -40,8 +40,7 @@ namespace AQI_Map
 
             this.Text = "AQI Finder - purpleAir  v1.92";
 
-            GMap.NET.MapProviders.GoogleMapProvider.Instance.ApiKey = "AIzaSyAwIR5k6UkOWGjUL7VGsJ9GuydrJDCRTt0";
-
+            GMap.NET.MapProviders.GoogleMapProvider.Instance.ApiKey = AQI_Map.Properties.Settings.Default.key;// "AIzaSyAwIR5k6UkOWGjUL7VGsJ9GuydrJDCRTt0";
 
             comboBoxType.DataSource = Enum.GetValues( typeof( AqiPackage.Type ) );
 
@@ -70,6 +69,8 @@ namespace AQI_Map
         }
 
         /*
+        //https://csharp.developreference.com/article/18548009/How+do+I+create+and+plot+a+ContourSeries+with+Oxyplot%3F
+        //https://csharp.hotexamples.com/examples/-/ContourSeries/-/php-contourseries-class-examples.html
         private static Func<double, double, double> peaks = ( x, y ) =>
            3 * ( 1 - x ) * ( 1 - x ) * Math.Exp( -( x * x ) - ( y + 1 ) * ( y + 1 ) ) - 10 * ( x / 5 - x * x * x - y * y * y * y * y ) * Math.Exp( -x * x - y * y ) - 1.0 / 3 * Math.Exp( -( x + 1 ) * ( x + 1 ) - y * y );
 

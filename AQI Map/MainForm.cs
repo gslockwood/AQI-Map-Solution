@@ -38,9 +38,9 @@ namespace AQI_Map
 
             InitializeComponent();
 
-            this.Text = "AQI Finder - purpleAir  v1.92";
+            this.Text = "AQI Finder - purpleAir  v1.93";
 
-            GMap.NET.MapProviders.GoogleMapProvider.Instance.ApiKey = AQI_Map.Properties.Settings.Default.key;// "AIzaSyAwIR5k6UkOWGjUL7VGsJ9GuydrJDCRTt0";
+            GMap.NET.MapProviders.GoogleMapProvider.Instance.ApiKey = AQI_Map.Properties.Settings.Default.key;
 
             comboBoxType.DataSource = Enum.GetValues( typeof( AqiPackage.Type ) );
 

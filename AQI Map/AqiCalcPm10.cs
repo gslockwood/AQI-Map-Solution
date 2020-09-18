@@ -1,8 +1,8 @@
-﻿using GMap.NET.WindowsForms.Markers;
-using System;
+﻿using Controller;
+using GMap.NET.WindowsForms.Markers;
 using System.Drawing;
 
-namespace Controller
+namespace AQI_Map
 {
     public class AqiCalcPm2pt5 : AqiCalc
     {
@@ -49,7 +49,7 @@ namespace Controller
                 Clow = 350.5; Chigh = 500.4;
             }
 
-            base.Calc();
+            Calc();
 
         }
 
@@ -108,7 +108,7 @@ namespace Controller
 
         public Color getColor()
         {
-            return this.color;
+            return color;
         }
     }
 
@@ -157,7 +157,7 @@ namespace Controller
                 Clow = 505; Chigh = 604;
             }
 
-            base.Calc();
+            Calc();
 
         }
 

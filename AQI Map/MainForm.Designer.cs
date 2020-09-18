@@ -53,6 +53,7 @@ namespace AQI_Map
             this.panelControls = new System.Windows.Forms.FlowLayoutPanel();
             this.comboBoxType = new System.Windows.Forms.ComboBox();
             this.checkBoxFilter = new System.Windows.Forms.CheckBox();
+            this.textBoxLocation = new System.Windows.Forms.TextBox();
             this.panelMain.SuspendLayout();
             this.panelButtons.SuspendLayout();
             this.panelMsg.SuspendLayout();
@@ -167,7 +168,7 @@ namespace AQI_Map
             // comboBoxMapType
             // 
             this.comboBoxMapType.FormattingEnabled = true;
-            this.comboBoxMapType.Location = new System.Drawing.Point(3, 3);
+            this.comboBoxMapType.Location = new System.Drawing.Point(219, 3);
             this.comboBoxMapType.Name = "comboBoxMapType";
             this.comboBoxMapType.Size = new System.Drawing.Size(157, 23);
             this.comboBoxMapType.TabIndex = 1;
@@ -176,7 +177,7 @@ namespace AQI_Map
             // comboBoxParticleType
             // 
             this.comboBoxParticleType.FormattingEnabled = true;
-            this.comboBoxParticleType.Location = new System.Drawing.Point(166, 3);
+            this.comboBoxParticleType.Location = new System.Drawing.Point(382, 3);
             this.comboBoxParticleType.Name = "comboBoxParticleType";
             this.comboBoxParticleType.Size = new System.Drawing.Size(146, 23);
             this.comboBoxParticleType.TabIndex = 1;
@@ -184,7 +185,7 @@ namespace AQI_Map
             // 
             // labelAverageAqi
             // 
-            this.labelAverageAqi.Location = new System.Drawing.Point(556, 4);
+            this.labelAverageAqi.Location = new System.Drawing.Point(772, 4);
             this.labelAverageAqi.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
             this.labelAverageAqi.Name = "labelAverageAqi";
             this.labelAverageAqi.Size = new System.Drawing.Size(54, 19);
@@ -194,7 +195,7 @@ namespace AQI_Map
             // comboBoxTime
             // 
             this.comboBoxTime.FormattingEnabled = true;
-            this.comboBoxTime.Location = new System.Drawing.Point(318, 3);
+            this.comboBoxTime.Location = new System.Drawing.Point(534, 3);
             this.comboBoxTime.Name = "comboBoxTime";
             this.comboBoxTime.Size = new System.Drawing.Size(121, 23);
             this.comboBoxTime.TabIndex = 4;
@@ -203,6 +204,7 @@ namespace AQI_Map
             // 
             this.panelControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelControls.Controls.Add(this.textBoxLocation);
             this.panelControls.Controls.Add(this.comboBoxMapType);
             this.panelControls.Controls.Add(this.comboBoxParticleType);
             this.panelControls.Controls.Add(this.comboBoxTime);
@@ -217,7 +219,7 @@ namespace AQI_Map
             // comboBoxType
             // 
             this.comboBoxType.FormattingEnabled = true;
-            this.comboBoxType.Location = new System.Drawing.Point(445, 3);
+            this.comboBoxType.Location = new System.Drawing.Point(661, 3);
             this.comboBoxType.Name = "comboBoxType";
             this.comboBoxType.Size = new System.Drawing.Size(105, 23);
             this.comboBoxType.TabIndex = 5;
@@ -226,13 +228,22 @@ namespace AQI_Map
             // checkBoxFilter
             // 
             this.checkBoxFilter.AutoSize = true;
-            this.checkBoxFilter.Location = new System.Drawing.Point(616, 3);
+            this.checkBoxFilter.Location = new System.Drawing.Point(832, 3);
             this.checkBoxFilter.Name = "checkBoxFilter";
             this.checkBoxFilter.Size = new System.Drawing.Size(52, 19);
             this.checkBoxFilter.TabIndex = 6;
             this.checkBoxFilter.Text = "Filter";
             this.checkBoxFilter.UseVisualStyleBackColor = true;
             this.checkBoxFilter.CheckedChanged += new System.EventHandler(this.checkBoxFilter_CheckedChanged);
+            // 
+            // textBoxLocation
+            // 
+            this.textBoxLocation.Location = new System.Drawing.Point(3, 3);
+            this.textBoxLocation.Name = "textBoxLocation";
+            this.textBoxLocation.Size = new System.Drawing.Size(210, 23);
+            this.textBoxLocation.TabIndex = 7;
+            this.textBoxLocation.TextChanged += new System.EventHandler(this.textBoxLocation_TextChanged);
+            textBoxLocation.KeyUp += TextBoxLocation_KeyUp;
             // 
             // MainForm
             // 
@@ -257,6 +268,7 @@ namespace AQI_Map
 
         }
 
+
         #endregion
 
         private System.Windows.Forms.Panel panelMain;
@@ -274,5 +286,6 @@ namespace AQI_Map
         private System.Windows.Forms.FlowLayoutPanel panelControls;
         private ComboBox comboBoxType;
         private CheckBox checkBoxFilter;
+        private TextBox textBoxLocation;
     }
 }

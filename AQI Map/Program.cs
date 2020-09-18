@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace AQI_Map
@@ -18,12 +16,29 @@ namespace AQI_Map
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault( false );
 
-            AQIRestService.AQIRestService aqi = new AQIRestService.AQIRestService();
+            using( var mutex = new Mutex( false, "AQI Finder" ) )
+            {
+                // TimeSpan.Zero to test the mutex's signal state and
+                // return immediately without blocking
+                bool isAnotherInstanceOpen = !mutex.WaitOne( TimeSpan.Zero );
+                if( isAnotherInstanceOpen )
+                {
+                    Console.WriteLine( "Only one instance of this app is allowed." );
+                    return;
+                }
 
-            Application.Run( new MainForm(new Controller.Controller( aqi ) ) );
+                // main application entry point
+                AQIRestService.AQIRestService aqi = new AQIRestService.AQIRestService();
 
-            aqi.Dispose();
-            //
+                Application.Run( new MainForm( new Controller.Controller( aqi ) ) );
+
+                aqi.Dispose();
+
+                mutex.ReleaseMutex();
+                //
+            }
         }
+        //
     }
 }
+

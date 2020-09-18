@@ -1,13 +1,10 @@
 ﻿using AQI_Map;
 using AQIRestService;
 using GMap.NET;
-using GMap.NET.MapProviders;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Utilities;
 
 namespace Controller
@@ -17,13 +14,6 @@ namespace Controller
         Logger logger = new Logger( "AQI_Map Controller", Logger.Targets.Console );
         private AQIRestService.AQIRestService aQIRestService;
         private AqiPackage currentAqiPackage;
-        //private IDictionary<int, double> current_pm_25List;
-        //private IDictionary<int, double> current_pm_10List;
-
-        /*
-        public double currentSum_pm_1 { get; private set; }
-        public double currentSum_pm_10 { get; private set; }
-        */
         public List<AqiPackage.Data> currentAqiPackageDataList { get; private set; }
         public bool isCurrentAqiPackageDataList { get { return ( ( currentAqiPackageDataList != null ) && ( currentAqiPackageDataList.Count > 0 ) ); } }
 
@@ -43,7 +33,7 @@ namespace Controller
             string freeUrl = @"https://www.purpleair.com/data.json?opt=1/mAQI/a10/cC0&fetch=true";
 
             freeUrl = freeUrl.Replace( "/a10/", string.Format( "/a{0}/", minutes ) );
-            System.Diagnostics.Debug.WriteLine( freeUrl );
+            //System.Diagnostics.Debug.WriteLine( freeUrl );
             url = freeUrl;
 
             String location = "";
@@ -57,6 +47,7 @@ namespace Controller
             //location = "&nwlat=37.324777195&selat=37.17659&nwlng=-122.944045&selng=-122.10433235";
 
             url += location;
+            System.Diagnostics.Debug.WriteLine( url );
             object result = await aQIRestService.GetAqiPackageAsync( url );
             if( result is String )
                 return result;
@@ -108,7 +99,7 @@ namespace Controller
             return ( currentAqiPackage == null ) ? null : currentAqiPackage.data;
         }
 
-        internal IList<AqiPackage.Data> getfilteredCurrent_pm_1_AqiData( int index, int currentType, int minimum )
+        internal IList<AqiPackage.Data> getfilteredCurrentAqiData( int index, int currentType, int minimum )
         {
             IList<AqiPackage.Data> list = new List<AqiPackage.Data>( this.currentAqiPackageDataList );
             //logger.Debug( "getfilteredCurrent_pm_1_AqiData: list count=" + list.Count );
@@ -166,7 +157,7 @@ namespace Controller
 
             IList<AqiPackage.Data> currentData = currentAqiPackageDataList;
             if( filterChecked )
-                currentData = getfilteredCurrent_pm_1_AqiData( particleIndex, (int)currentType, filterPercentage );
+                currentData = getfilteredCurrentAqiData( particleIndex, (int)currentType, filterPercentage );
 
             IList<DataPoint> dataPoints = new List<DataPoint>();
 
@@ -234,25 +225,40 @@ namespace Controller
         public IList<DataPoint> DataPoints { get; }
 
     }
-    public class DataPoint
+
+    public class DataPointBase
     {
         public double Lat { get; }
         public double Lon { get; }
-        public string Label { get; }
         public double Value { get; }
-        public Color Color { get; internal set; }
-
-        public DataPoint( double lat, double lon, string label, double value, Color color )
+        public DataPointBase( double lat, double lon, double value )
         {
             Lat = lat;
             Lon = lon;
-            Label = label;
             Value = value;
-            Color =color;
-            //
-        }
 
+        }
 
     }
 
-}
+    public class DataPoint : DataPointBase
+    {
+        //public double Lat { get; }
+        //public double Lon { get; }
+        //public double Value { get; }
+        public string Label { get; }
+        public Color Color { get; internal set; }
+
+        public DataPoint( double lat, double lon, string label, double value, Color color ) : base( lat, lon, value )
+        {
+            //Lat = lat;
+            //Lon = lon;
+            //Value = value;
+            Label = label;
+            Color = color;
+            //
+        }
+
+    }
+
+    }

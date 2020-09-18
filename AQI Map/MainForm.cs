@@ -1,14 +1,19 @@
-﻿using AQIRestService;
+﻿using System;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Diagnostics;
+
+using Utilities;
+using GeoUtilities;
+using Controller;
+using AQIRestService;
 using GMap.NET;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
-using System;
-using System.Windows.Forms;
-using Utilities;
-using GeoUtilities;
-using System.Collections.Generic;
-using Controller;
-using System.Drawing;
+using OxyPlot;
+//using OxyPlot;
+//using OxyPlot.Series;
 
 namespace AQI_Map
 {
@@ -20,10 +25,6 @@ namespace AQI_Map
         private RectLatLng lastViewArea;
 
         public bool initializing { get; private set; }
-        public bool isInitializing()
-        {
-            return initializing;
-        }
 
         public MainForm( Controller.Controller controller )
         {
@@ -32,8 +33,15 @@ namespace AQI_Map
 
             this.controller = controller;
 
+            //oxy();
+
 
             InitializeComponent();
+
+            this.Text = "AQI Finder - purpleAir  v1.92";
+
+            GMap.NET.MapProviders.GoogleMapProvider.Instance.ApiKey = "AIzaSyAwIR5k6UkOWGjUL7VGsJ9GuydrJDCRTt0";
+
 
             comboBoxType.DataSource = Enum.GetValues( typeof( AqiPackage.Type ) );
 
@@ -60,6 +68,47 @@ namespace AQI_Map
             gmap.DragButton = MouseButtons.Left;
             //
         }
+
+        /*
+        private static Func<double, double, double> peaks = ( x, y ) =>
+           3 * ( 1 - x ) * ( 1 - x ) * Math.Exp( -( x * x ) - ( y + 1 ) * ( y + 1 ) ) - 10 * ( x / 5 - x * x * x - y * y * y * y * y ) * Math.Exp( -x * x - y * y ) - 1.0 / 3 * Math.Exp( -( x + 1 ) * ( x + 1 ) - y * y );
+
+        private double[,] oxy()
+        {
+        //OxyPlot.Series.ContourSeries contourSeries = new OxyPlot.Series.ContourSeries();
+        //contourSeries.Data
+        //contourSeries.CalculateContours
+        //var model = new OxyPlot.PlotModel { Title = "Peaks" };
+        aaa:
+            double[] ColumnCoordinate = OxyPlot.ArrayBuilder.CreateVector( -3, 3, 0.05 );
+            double[] RowCoordinate = OxyPlot.ArrayBuilder.CreateVector( -3.1, 3.1, 0.05 );
+
+            double[,] data = new double[4, 4];
+            var cs = new OxyPlot.Series.ContourSeries
+            {
+                //Data = (Double[,])data,
+                //ColumnCoordinates = OxyPlot.ArrayBuilder.CreateVector( 37.0, 38.0, 0.5 ),
+                //RowCoordinates = OxyPlot.ArrayBuilder.CreateVector( -122.0, -121.0, 0.5 )
+                ColumnCoordinates = ColumnCoordinate,
+                RowCoordinates = RowCoordinate,
+                Data = OxyPlot.ArrayBuilder.Evaluate( peaks, ColumnCoordinate, RowCoordinate )
+
+            };
+
+
+            //cs.Data = OxyPlot.ArrayBuilder.Evaluate( peaks, cs.ColumnCoordinates, cs.RowCoordinates );
+
+            //double[,] temp = OxyPlot.ArrayBuilder.Evaluate( peaks, cs.ColumnCoordinates, cs.RowCoordinates );
+            //goto aaa;
+            return cs.Data;
+
+            //model.Subtitle = cs.Data.GetLength( 0 ) + "×" + cs.Data.GetLength( 1 );
+            //goto aaa;
+            //model.Series.Add( cs );
+            //return model;
+            //
+        }
+        */
 
         private void MainForm_Load( object sender, EventArgs e )
         {
@@ -94,9 +143,13 @@ namespace AQI_Map
             markers.Markers.Add( marker );
             gmap.Overlays.Add( markers );
 
-            initializing = false;
+            Debug.WriteLine( "GeoLocation_StatusChanged: initializing=" + initializing );
+            //initializing = false;
 
-            //buttonFind_ClickAsync( this, null );
+            /*
+            buttonFind_ClickAsync( this, null );
+            if( !controller.isCurrentAqiPackageDataList)
+                buttonFind_ClickAsync( this, null );*/
             //
         }
 
@@ -107,8 +160,19 @@ namespace AQI_Map
             //
         }
 
+        private delegate void SafeCallDelegate( object sender, EventArgs e );
         private async void buttonFind_ClickAsync( object sender, EventArgs e )
         {
+            if( this.InvokeRequired )
+            {
+                //Debug.WriteLine( "InvokeRequired" );
+                var d = new SafeCallDelegate( buttonFind_ClickAsync );
+                this.Invoke( d, new object[] { this, null } );
+                return;
+
+            }
+
+
             //logger.Info( viewArea.LocationTopLeft + " " + viewArea.LocationRightBottom );
 
             labelMsg.Text = null;
@@ -163,16 +227,87 @@ namespace AQI_Map
 
             IList<DataPoint> dataPoints = data.DataPoints;
 
+            double maxValue = 0;
             GMapOverlay markers = new GMapOverlay( "markers" );
             foreach( DataPoint dataPoint1 in dataPoints )
+            {
                 markers.Markers.Add( BuildMarker( dataPoint1.Lat, dataPoint1.Lon, dataPoint1.Label, dataPoint1.Value, dataPoint1.Color ) );
+                if( maxValue < dataPoint1.Value )
+                    maxValue = dataPoint1.Value;
+                //
+            }
 
             labelAverageAqi.Text = data.averageAqi.ToString();
 
             gmap.Overlays.Add( markers );
-            
+
+            /*
+            // doesn't work
+            GMapOverlay routes = Buildroutes( maxValue, dataPoints );
+            gmap.Overlays.Add( routes );
+            */
+
+            // rerenders the map and values
             gmap.Zoom += 0.000000001;
             //buttonFit_ClickAsync( this, null );
+            //
+        }
+
+        private GMapOverlay Buildroutes( double maxValue, IList<DataPoint> dataPoints )
+        {
+            double[] xArray = new Double[dataPoints.Count];
+            double[] yArray = new Double[dataPoints.Count];
+            double[] zArray = new Double[dataPoints.Count];
+
+            int max =( int)maxValue / 1 + 1;
+            for( int index = 0; index < max; index++ )
+                zArray[index] = index;
+
+            Double[,] array = new Double[dataPoints.Count, 3];
+            int counter = 0;
+            foreach( DataPoint dataPoint1 in dataPoints )
+            {
+                array[counter, 0] = dataPoint1.Lat;
+                array[counter, 1] = dataPoint1.Lon;
+                array[counter, 2] = dataPoint1.Value;
+                //zArray[counter] = dataPoint1.Value;
+
+                counter++;
+
+            }
+            int upperBound = array.GetUpperBound( 0 );
+
+            double topLeftLat = this.viewArea.LocationTopLeft.Lat;
+            double rightBottomLat = this.viewArea.LocationRightBottom.Lat;
+            double increment = ( topLeftLat - rightBottomLat ) / 10;
+            for( int index = 0; index < dataPoints.Count; index++ )
+                xArray[index] = topLeftLat - index * increment;
+
+            double topLeftLng = this.viewArea.LocationTopLeft.Lng;
+            double rightBottomLng = this.viewArea.LocationRightBottom.Lng;
+
+            increment = ( topLeftLng - rightBottomLng ) / 10;
+            for( int index = 0; index < dataPoints.Count; index++ )
+                yArray[index] = topLeftLng + index * increment;
+
+            GMapOverlay routes = new GMapOverlay( "routes" );
+            List<PointLatLng> points = null;// new List<PointLatLng>();
+
+            IDictionary<double, IList<Controller.DataPointBase>> results = Conrec.Contour( array, xArray, yArray, zArray );
+            foreach( double key in results.Keys )
+            {
+                points = new List<PointLatLng>();
+                IList<DataPointBase> list = results[key];
+                foreach( DataPointBase dpoint in list )
+                    points.Add( new PointLatLng( dpoint.Lat, dpoint.Lon ) );
+
+                GMapRoute route = new GMapRoute( points, key.ToString() );
+                route.Stroke = new Pen( Color.Red, 1 );
+                routes.Routes.Add( route );
+
+            }
+
+            return routes;
             //
         }
 
@@ -183,57 +318,22 @@ namespace AQI_Map
             return marker;
             //
         }
-        /*
-        private GMapMarker BuildMarkerX( int varIndex, double lat, double lon, string label, double value )
-        {
-            Double variable = value;
-            IAqiCalc aqiCalc = null;
-            if( varIndex == (int)AqiPackage.Names.PM25 )
-                aqiCalc = new AqiCalcPm2pt5( variable );
 
-            else if( varIndex == (int)AqiPackage.Names.PM10 )
-                aqiCalc = new AqiCalcPm10( variable );
-
-            else
-            {
-                labelMsg.Text = "BuildMarker: aqiCalc = null";
-                return null;
-            }
-
-            double aqi = aqiCalc.getAQI();
-            GMarkerGoogleType type = aqiCalc.getMarkerType();
-
-            //logger.Debug( label + " " + aqi );
-
-            PointLatLng point = new GMap.NET.PointLatLng( lat, lon );
-
-            GMapMarker marker = new MyGMarkerGoogle( point, type, aqi.ToString( "0.##" ), aqiCalc.getColor() );
-
-            marker.ToolTipText = label + "\n" + aqi.ToString();
-
-            return marker;
-            //
-        }
-        */
         private void gmap_OnTileLoadComplete( long elapsedMilliseconds )
         {
             viewArea = gmap.ViewArea;
-            //logger.Info( "gmap_OnTileLoadComplete: " + viewArea.LocationTopLeft + " " + viewArea.LocationRightBottom );
+            logger.Info( "gmap_OnTileLoadComplete: " + viewArea.LocationTopLeft + " " + viewArea.LocationRightBottom );
+
+            if( initializing )
+            {
+                initializing = false;
+
+                buttonFind_ClickAsync( this, null );
+                if( !controller.isCurrentAqiPackageDataList )
+                    buttonFind_ClickAsync( this, null );
+            }
+
         }
-
-        /*
-        private void gmap_OnMapDoubleClick( PointLatLng pointClick, MouseEventArgs e )
-        {
-            PointLatLng pt = gmap.FromLocalToLatLng( e.X, e.Y );
-            gmap.Position = pt;
-
-            if( e.Button.Equals( MouseButtons.Left ) )
-                gmap.Zoom += 1;
-
-            else if( e.Button.Equals( MouseButtons.Right ) )
-                gmap.Zoom -= 1;
-            //
-        }*/
 
         private void gmap_DoubleClick( object sender, EventArgs ea )
         {
@@ -263,6 +363,7 @@ namespace AQI_Map
 
         private void gmap_OnMapDrag()
         {
+            //this.buttonFind_ClickAsync( this, null );
             gmap.ReloadMap();
         }
 
@@ -290,6 +391,43 @@ namespace AQI_Map
                 PlotData();
             //
         }
+
+        private void TextBoxLocation_KeyUp( object sender, KeyEventArgs e )
+        {
+            if( e.KeyCode.Equals( Keys.Enter ) )
+            {
+                gmap.MapProvider = GMap.NET.MapProviders.GoogleMapProvider.Instance;
+                GeoCoderStatusCode code = gmap.SetPositionByKeywords( this.textBoxLocation.Text );
+                /*
+                GeoCoderStatusCode status = GeoCoderStatusCode.UNKNOWN_ERROR;
+                GeocodingProvider gp = gmap.MapProvider as GeocodingProvider;
+                var pt = gp.GetPoint( "Paris, France", out status );
+                if( pt != null)
+                gmap.Position = pt.Value;// new GMap.NET.PointLatLng( 48.8589507, 2.2775175 );
+                */
+
+                if( code == GeoCoderStatusCode.OK )
+                    buttonFind_ClickAsync( this, null );
+                //
+            }
+
+            //if( textBoxLocation.Text.EndsWith( "\r\n" ) )
+            //    gmap.SetPositionByKeywords( textBoxLocation.Text );
+
+        }
+
+
+        private void textBoxLocation_TextChanged( object sender, EventArgs e )
+        {
+            if( textBoxLocation.Text.EndsWith( "\r\n" ) )
+                gmap.SetPositionByKeywords( textBoxLocation.Text );
+        }
+        public bool isInitializing()
+        {
+            return initializing;
+        }
+
+
         //
     }
 

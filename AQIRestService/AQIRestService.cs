@@ -1,12 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using Utilities;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace AQIRestService
 {
